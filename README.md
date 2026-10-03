@@ -124,7 +124,7 @@ GROUP BY pizza_name
 ORDER BY total_revenue ASC;
 ```
 
-## Tableau Dashboard
+### Tableau Dashboard
 
 [🔗 View Interactive Tableau Dashboard](https://public.tableau.com/app/profile/vaibhav.yadav6144/viz/PizzaSales_Report_Tableau/Home)
 
