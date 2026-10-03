@@ -7,7 +7,7 @@ This project analyzes the sales data of a pizza shop to derive meaningful insigh
 ### Project Objectives
 
 - To calculate key metrics such as total revenue, average order value, and total pizzas sold.
-- To identify trends in pizza sales across different times of the day and week.
+- To identify trends in pizza sales by time of day and week.
 - To analyze the performance of different pizza categories and sizes.
 - To determine the top and bottom performers in terms of revenue.
 
@@ -62,7 +62,7 @@ FROM PizzaSales;
 
 To understand the trend of pizza sales throughout the day, the following query is used:
 
-```sql'
+```sql
 SELECT DATEPART(hour, order_time) AS Order_hour, SUM(quantity) AS TotalPizza_Sold 
 FROM PizzaSales 
 GROUP BY DATEPART(hour, order_time) 
@@ -80,30 +80,29 @@ GROUP BY DATEPART(iso_week, order_date), YEAR(order_date)
 ORDER BY DATEPART(iso_week, order_date), YEAR(order_date);
 ```
 
-#### Percentage of Sales by Pizza Category
-
-The percentage of total sales by pizza category is calculated as:
-
-```sql
-SELECT pizza_category, SUM(total_price) AS Total_Sales, SUM(total_price)*100/(SELECT SUM(total_price) FROM PizzaSales WHERE MONTH(order_date) = 1) AS PercentTotal_Sales 
-FROM PizzaSales 
-WHERE MONTH(order_date) = 1 
-GROUP BY pizza_category;
-```
-
 #### Percentage of Sales by Pizza Size
 
 The percentage of sales by pizza size is determined using:
 
 ```sql
-SELECT pizza_size, CAST(SUM(total_price) AS DECIMAL(10,2)) AS Total_Sales, CAST(SUM(total_price)*100/(SELECT SUM(total_price) FROM PizzaSales WHERE DATEPART(quarter, order_date)=1) AS DECIMAL(10,2)) AS PercentTotal_Sales 
-FROM PizzaSales 
-WHERE DATEPART(quarter, order_date)=1 
-GROUP BY pizza_size 
+SELECT pizza_size, CAST(SUM(total_price) AS DECIMAL(10,2)) AS Total_Sales, CAST(SUM(total_price) * 100.0 / (SELECT SUM(total_price) FROM PizzaSales) AS DECIMAL(10,2)) AS PercentTotal_Sales
+FROM PizzaSales
+GROUP BY pizza_size
 ORDER BY PercentTotal_Sales DESC;
 ```
 
-#### Top 5 Best Sellers by Revenue
+#### Percentage of Sales by Pizza Category
+
+The percentage of total sales by pizza category is calculated as:
+
+```sql
+SELECT pizza_category, SUM(total_price) AS Total_Sales, SUM(total_price) * 100.0 / (SELECT SUM(total_price) FROM PizzaSales) AS PercentTotal_Sales
+FROM PizzaSales
+GROUP BY pizza_category
+ORDER BY PercentTotal_Sales DESC;
+```
+
+#### Top 5 Pizzas by Revenue
 
 The top 5 best-selling pizzas by revenue are identified with:
 
@@ -114,7 +113,7 @@ GROUP BY pizza_name
 ORDER BY total_revenue DESC;
 ```
 
-#### Bottom 5 Best Sellers by Revenue
+#### Bottom 5 Pizzas by Revenue
 
 Similarly, the bottom 5 pizzas by revenue are found using:
 
@@ -125,13 +124,18 @@ GROUP BY pizza_name
 ORDER BY total_revenue ASC;
 ```
 
+## Tableau Dashboard
+
+[🔗 View Interactive Tableau Dashboard](https://public.tableau.com/app/profile/vaibhav.yadav6144/viz/PizzaSales_Report_Tableau/Home)
+
 ### Insights
 
-- The total revenue generated is a crucial metric that reflects the overall sales performance.
-- Understanding the average order value helps in assessing the revenue generated per transaction.
-- Identifying trends in pizza orders at different times and days can assist in optimizing staffing and inventory.
-- Analyzing the performance of different pizza categories and sizes can inform decisions on menu offerings.
-- Recognizing the top and bottom sellers helps in making strategic decisions related to promotions and product discontinuation.
+- The dataset generated approximately **$817.86K in total revenue** across **21,350 orders**.
+- The average order value was approximately **$38.31**, with an average of **2.32 pizzas per order**.
+- **Classic** pizzas contributed the largest share of category revenue at approximately **26.9%**, followed by **Supreme (25.5%)**, **Chicken (24.0%)**, and **Veggie (23.7%)**.
+- **Large pizzas** contributed the highest share of revenue by size at approximately **45.9%**, followed by **Medium (30.5%)**.
+- **The Thai Chicken Pizza** generated the highest revenue among individual pizza types, while **The Brie Carre Pizza** generated the lowest.
+- The hourly and weekly analyses show variation in pizza demand across the operating period, providing visibility into ordering patterns.  
 
 ### Conclusion
 
